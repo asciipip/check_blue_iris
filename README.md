@@ -27,5 +27,5 @@ the moment, because all of the author's cameras only record when triggered
 by motion detection.
 
 If you need additional error criteria, please feel free to contact the
-author ([Phil! Gold](mailto:phil_g@pobox.com)) and either describe how
+author ([Pip! Gold](mailto:pip@aperiodic.net)) and either describe how
 your setup works or send a patch/pull request.
