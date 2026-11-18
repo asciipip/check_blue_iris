@@ -11,11 +11,10 @@ means you need to have the web server enabled in order to use this plugin.
 Installation
 ------------
 
-The plugin requires Python version 2.6 or later on the testing system.  It
-shouldn't require anything else.  On the system to be monitored, the web
-server must be enabled and accessible (ports opened on the Windows
-firewall, etc.).  The plugin should be fairly self-explanatory via its
-`--help` option.
+The plugin requires Python on the testing system.  It shouldn't require
+anything else.  On the system to be monitored, the web server must be
+enabled and accessible (ports opened on the Windows firewall, etc.).  The
+plugin should be fairly self-explanatory via its `--help` option.
 
 
 Limitations

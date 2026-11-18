@@ -1,10 +1,11 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 import json
 import optparse
 import hashlib
 import sys
-import urllib2
+import urllib.error
+import urllib.request
 
 RC_OK   = 0
 RC_WARN = 1
@@ -24,13 +25,13 @@ parser.add_option('-t', '--timeout', type='int', default=10,
 (options, args) = parser.parse_args()
 
 if not options.host:
-    print 'You must specify a host to connect to.'
+    print('You must specify a host to connect to.')
     sys.exit(RC_UNKN)
 
 json_url = '%s://%s:%d/json' % ('https' if options.ssl else 'http', options.host, options.port)
 
 def send_command(cmd):
-    return json.loads(urllib2.urlopen(json_url, json.dumps(cmd), timeout=options.timeout).read())
+    return json.loads(urllib.request.urlopen(json_url, json.dumps(cmd).encode('utf8'), timeout=options.timeout).read())
 
 def summarize_problems(global_errors, global_warnings, cam_errors, cam_warnings):
     """Returns a single string summarizing all of the problems given to it.
@@ -77,14 +78,14 @@ try:
     result = send_command({'cmd': 'login'})
     session = result['session']
     response = hashlib.md5()
-    response.update(options.username or '')
-    response.update(':')
-    response.update(session)
-    response.update(':')
-    response.update(options.password or '')
+    response.update((options.username or '').encode('utf8'))
+    response.update(b':')
+    response.update(session.encode('utf8'))
+    response.update(b':')
+    response.update((options.password or '').encode('utf8'))
     result = send_command({'cmd':'login', 'session': session, 'response': response.hexdigest()})
     if result['result'] != 'success':
-        print 'Could not log in:', result['data']['reason']
+        print('Could not log in:', result['data']['reason'])
         sys.exit(RC_UNKN)
 
     global_errors = []
@@ -118,16 +119,16 @@ try:
         # If the logout fails, we're not really worried.
         pass
 
-    print summarize_problems(global_errors, global_warnings, cam_errors, cam_warnings)
+    print(summarize_problems(global_errors, global_warnings, cam_errors, cam_warnings))
     details = detail_problems(global_errors, global_warnings, cam_errors, cam_warnings)
     if details:
-        print '\n'.join(details)
+        print('\n'.join(details))
         
     if len(global_errors) + len(cam_errors) > 0:
         sys.exit(RC_CRIT)
     if len(global_warnings) + len(cam_warnings) > 0:
         sys.exit(RC_WARN)
     sys.exit(RC_OK)
-except urllib2.URLError, e:
-    print 'Error fetching URL:', e
+except urllib.error.URLError as e:
+    print('Error fetching URL:', e)
     sys.exit(RC_UNKN)
